@@ -1,3 +1,5 @@
 requests
 pytest==9.0.2
 pydantic
+faker
+pytest-xdist==3.8.0
