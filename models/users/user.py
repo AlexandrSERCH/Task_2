@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-import requests
-
 from models.responses.user_response import UserResponse
 
 
