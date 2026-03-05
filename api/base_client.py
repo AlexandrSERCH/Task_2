@@ -47,10 +47,11 @@ class BaseClient:
             headers=merged_headers)
 
         response_time = f"{time.time() - start_time:.2f}"
+        response_body = response.json()
 
         allure.attach(str(response.status_code), "response_status_code", allure.attachment_type.TEXT)
         allure.attach(json.dumps(dict(response.headers), ensure_ascii=False, indent=2), "response_headers", allure.attachment_type.JSON)
-        allure.attach(response.text, "response_body", allure.attachment_type.TEXT)
+        allure.attach(json.dumps(response_body, ensure_ascii=False, indent=2), "response_body", allure.attachment_type.JSON)
         allure.attach(response_time, "response_time_in_sec", allure.attachment_type.TEXT)
 
         return response
