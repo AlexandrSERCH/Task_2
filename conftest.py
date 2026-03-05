@@ -1,7 +1,7 @@
 import pytest
 
-from api.base_client import BaseClient
-from api.user_client import UserClient
+from clients.base_client import BaseClient
+from clients.user_client import UserClient
 from data.users_data.builder_users import BuildUser, BuildPartialUser
 from models.users.user import CreatedUser
 

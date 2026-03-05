@@ -1,13 +1,12 @@
 from faker import Faker
 
+fake = Faker("ru_RU")
 
 class BuildUser:
 
     @staticmethod
     def build_user(*, email: str | None = None, password: str | None = None, name: str | None = None) -> dict:
         """Если не заполнить именнованные аргументы, то поля заполнятся фейковыми данными"""
-
-        fake = Faker("ru_RU")
 
         return {
             "email": email if email else fake.email(),
@@ -17,14 +16,22 @@ class BuildUser:
 
 class BuildPartialUser(dict):
 
+    def _set(self, key: str, value) -> BuildPartialUser:
+        clone = BuildPartialUser(self) # создаём копию текущего состояния, чтобы не мутировать оригинал
+        clone[key] = value
+        return clone
+
     def with_email(self, email: str) -> BuildPartialUser:
-        self["email"] = email
-        return self
+        return self._set("email", email)
+
+    def with_random_email(self):
+        return self._set("email", fake.email())
 
     def with_password(self, password: str) -> BuildPartialUser:
-        self["password"] = password
-        return self
+        return self._set("password", password)
+
+    def with_random_password(self):
+        return self._set("password", fake.password(length=8, special_chars=False))
 
     def with_name(self, name: str) -> BuildPartialUser:
-        self["name"] = name
-        return self
+        return self._set("name", name)

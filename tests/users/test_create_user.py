@@ -18,9 +18,10 @@ class TestCreateUser:
         assert result.status_code == 403
         assert result.body.message == "User already exists"
 
-    user_without_email = BuildPartialUser().with_password("1234").with_name("Alex")
-    user_without_password = BuildPartialUser().with_email("example@mail.com").with_name("Alex")
-    user_without_name = BuildPartialUser().with_email("example@mail.com").with_password("1234")
+    new_user = BuildPartialUser()
+    user_without_email = new_user.with_password("1234").with_name("Alex")
+    user_without_password = new_user.with_email("example@mail.com").with_name("Alex")
+    user_without_name = new_user.with_email("example@mail.com").with_password("1234")
 
     @allure.title("Ошибка валидации при отсутствии обязательно поля: '{field}'")
     @pytest.mark.parametrize("user_data,field", [(user_without_email, "email"), (user_without_password, "password"), (user_without_name, "name")])
