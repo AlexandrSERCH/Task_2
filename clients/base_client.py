@@ -31,9 +31,9 @@ class BaseClient:
             allure.attach(url, "url", allure.attachment_type.TEXT)
             allure.attach(curl, "cURL", allure.attachment_type.TEXT)
             if params:
-                allure.attach(json.dumps(params, ensure_ascii=False, indent=2), "params", allure.attachment_type.JSON)
+                allure.attach(json.dumps(params, ensure_ascii=False, indent=2), "request_params", allure.attachment_type.JSON)
             if merged_headers:
-                allure.attach(json.dumps(merged_headers, ensure_ascii=False, indent=2), "headers", allure.attachment_type.JSON)
+                allure.attach(json.dumps(merged_headers, ensure_ascii=False, indent=2), "request_headers", allure.attachment_type.JSON)
             if json_body:
                 allure.attach(json.dumps(json_body, ensure_ascii=False, indent=2), "request_body", allure.attachment_type.JSON)
 
@@ -47,7 +47,11 @@ class BaseClient:
             headers=merged_headers)
 
         response_time = f"{time.time() - start_time:.2f}"
-        response_body = response.json()
+        # Обработка возврата HTML страницы в теле ответа, вместо JSON
+        try:
+            response_body = response.json()
+        except requests.exceptions.JSONDecodeError:
+            response_body = {"HTML": response.text}
 
         allure.attach(str(response.status_code), "response_status_code", allure.attachment_type.TEXT)
         allure.attach(json.dumps(dict(response.headers), ensure_ascii=False, indent=2), "response_headers", allure.attachment_type.JSON)

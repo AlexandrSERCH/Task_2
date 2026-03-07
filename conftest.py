@@ -1,7 +1,9 @@
 import pytest
 
 from clients.base_client import BaseClient
+from clients.order_client import OrderClient
 from clients.user_client import UserClient
+from data.orders_data.constants_orders import ORDERS_TEST_DATA
 from data.users_data.builder_users import BuildUser, BuildPartialUser
 from models.users.user import CreatedUser
 
@@ -10,17 +12,26 @@ from models.users.user import CreatedUser
 def base_client():
     return BaseClient()
 
+
 @pytest.fixture(scope="session")
 def user_client(base_client):
     return UserClient(base_client)
+
+
+@pytest.fixture(scope="session")
+def order_client(base_client):
+    return OrderClient(base_client)
+
 
 @pytest.fixture
 def build_user():
     return BuildUser().build_user
 
+
 @pytest.fixture
 def partial_user() -> BuildPartialUser:
     return BuildPartialUser()
+
 
 @pytest.fixture
 def created_user(user_client, build_user):
@@ -34,3 +45,13 @@ def created_user(user_client, build_user):
     deleted_user = user_client.delete_user(response_created_user.body.accessToken)
     if deleted_user.status_code != 202:
         pytest.fail(f"Удаление пользователя не прошло. Статус: {deleted_user.status_code}, тело: {deleted_user.body}")
+
+
+@pytest.fixture
+def exists_user_with_orders(created_user, order_client):
+    for order in ORDERS_TEST_DATA:
+        result_created_order = order_client.create_order(order.payload, created_user.response.body.accessToken)
+        if result_created_order.status_code != 200:
+            pytest.fail(f"Создание заказа провалено. Статус: {result_created_order.status_code}, тело {result_created_order.body}")
+
+    return created_user, ORDERS_TEST_DATA

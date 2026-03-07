@@ -3,6 +3,7 @@ import pytest
 
 from data.users_data.builder_users import BuildPartialUser
 
+
 @allure.epic("Пользователь")
 @allure.feature("Cоздание пользователя")
 class TestCreateUser:
@@ -24,7 +25,9 @@ class TestCreateUser:
     user_without_name = new_user.with_email("example@mail.com").with_password("1234")
 
     @allure.title("Ошибка валидации при отсутствии обязательно поля: '{field}'")
-    @pytest.mark.parametrize("user_data,field", [(user_without_email, "email"), (user_without_password, "password"), (user_without_name, "name")])
+    @pytest.mark.parametrize("user_data,field", [(user_without_email, "email"),
+                                                 (user_without_password, "password"),
+                                                 (user_without_name, "name")])
     def test_create_user_without_required_fields_returns_error(self, user_data, field, user_client):
         result = user_client.create_user(user_data)
         assert result.status_code == 403

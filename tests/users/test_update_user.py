@@ -17,6 +17,14 @@ class TestUpdateUser:
         assert result.status_code == 200
         assert result.body.user.email == new_email["email"]
 
+    @allure.title("Успешное обновление имени пользователе")
+    def test_success_update_name_user(self, user_client, created_user):
+        new_name = BuildPartialUser().with_random_name()
+        result = user_client.update_user(new_name, created_user.response.body.accessToken)
+
+        assert result.status_code == 200
+        assert result.body.user.name == new_name["name"]
+
     @allure.title("Успешное обновление пароля пользователе")
     def test_success_update_password_user(self, user_client, created_user):
         new_password = BuildPartialUser().with_random_password()
@@ -36,9 +44,13 @@ class TestUpdateUser:
     user = BuildPartialUser()
     user_with_email = user.with_random_email()
     user_with_password = user.with_random_password()
+    user_with_name = user.with_random_name()
 
     @allure.title("Ошибка валидации при попытке обновления пользователю поля '{field}', без авторизации")
-    @pytest.mark.parametrize("user_data, field", [(user_with_email, "email"), (user_with_password, "password")])
+    @pytest.mark.parametrize("user_data, field",
+                             [(user_with_email, "email"),
+                              (user_with_password, "password"),
+                              (user_with_name, "name")])
     def test_update_user_without_auth_returns_error(self, user_data, field, user_client, created_user):
         result = user_client.update_user(user_data)
         assert result.status_code == 401

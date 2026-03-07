@@ -2,6 +2,7 @@ import json
 
 _SKIP_HEADERS = {"User-Agent", "Accept-Encoding", "Accept", "Connection", "Content-Length"}
 
+
 def build_curl(method: str, url: str, headers: dict, json_body: dict = None) -> str:
     filtered = {k: v for k, v in headers.items() if k not in _SKIP_HEADERS}
 
