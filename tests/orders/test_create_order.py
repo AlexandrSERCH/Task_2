@@ -17,7 +17,7 @@ class TestCreateOrder:
 
     @allure.title("Успешное создание: '{expected_name}', для неавторизованного пользователя")
     @pytest.mark.parametrize("ingredients, expected_name", ORDERS_TEST_DATA)
-    def test_success_create_order_with_auth(self, ingredients, expected_name, order_client, created_user):
+    def test_success_create_order_without_auth(self, ingredients, expected_name, order_client):
         result = order_client.create_order(ingredients)
         assert result.status_code == 200
         assert result.body.name == expected_name
